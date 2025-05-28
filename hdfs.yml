@@ -1,7 +1,14 @@
-- hosts: namenode
+- hosts: all
   become: True
   become_user: root
   vars:
+    etc_hosts:
+      - ip: "192.168.85.2"
+        name: "namenode"
+      - ip: "192.168.85.3"
+        name: "datanode_1"
+      - ip: "192.168.85.4"
+        name: "datanode_2"
 
   tasks:
     - name: update system
@@ -16,7 +23,27 @@
         create: yes
         line: "{{ item.ip }} {{ item.name }}"
         state: present
-      loop: "{{ extra_hosts }}"
+      loop: "{{ etc_hosts }}"
       become: yes
 
-   
+    ##################################################################
+    - name: Create Netplan configuration for enp3s0 interface with DHCP
+      copy:
+        dest: "/etc/netplan/00-3ia3-config.yaml"
+        content: |
+          network:
+            version: 2
+            renderer: networkd
+            ethernets:
+              enp3s0:
+                dhcp4: false
+                addresses:
+                  - "{{ remote_ip }}"
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Apply Netplan configuration
+      command: netplan apply
+      become: true
+    ##################################################################
