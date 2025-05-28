@@ -1,0 +1,22 @@
+- hosts: namenode
+  become: True
+  become_user: root
+  vars:
+
+  tasks:
+    - name: update system
+      ansible.builtin.apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day
+
+    - name: Add extra hosts entries to /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        create: yes
+        line: "{{ item.ip }} {{ item.name }}"
+        state: present
+      loop: "{{ extra_hosts }}"
+      become: yes
+
+   
