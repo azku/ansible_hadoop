@@ -2,6 +2,7 @@
   become: True
   become_user: root
   vars:
+    installation_dir : /opt/hadoop
     etc_hosts:
       - ip: "192.168.85.2"
         name: "namenode"
@@ -47,3 +48,38 @@
       command: netplan apply
       become: true
     ##################################################################
+    #SSH gakoak sortu eta elkarbanatzea faltako litzateke. Isardeko makinetan eginda dago
+    ##################################################################
+    - name: Install JRE after apt update
+      become: yes
+      apt:
+        name: 
+          - default-jre
+        state: present
+        update_cache: yes
+    - name: Install ACL (Required to download as hadoop user)
+      become: yes
+      apt:
+        name: 
+          - acl
+        state: present
+        update_cache: yes
+    - name:  Beharrezko direktorioa sortu
+      become: yes
+      file:
+        path: "{{installation_dir}}"
+        state: directory
+        mode: 0755
+        owner: hadoop
+        group: hadoop
+        
+    - name: Hadoop lortu
+      become: yes
+      become_user: hadoop
+      unarchive:
+        src: https://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-3.4.1/hadoop-3.4.1.tar.gz
+        dest: "{{installation_dir}}"
+        mode: 0755
+        remote_src: yes
+
+
