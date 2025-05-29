@@ -2,68 +2,13 @@
   become: True
   become_user: root
   vars:
-    installation_dir : /opt/hadoop
-    etc_hosts:
-      - ip: "192.168.85.2"
-        name: "namenode"
-      - ip: "192.168.85.3"
-        name: "datanode_1"
-      - ip: "192.168.85.4"
-        name: "datanode_2"
+    installation_dir : "/opt/hadoop"
 
   tasks:
-    - name: update system
-      ansible.builtin.apt:
-        upgrade: yes
-        update_cache: yes
-        cache_valid_time: 86400 #One day
-
-    - name: Add extra hosts entries to /etc/hosts
-      lineinfile:
-        path: /etc/hosts
-        create: yes
-        line: "{{ item.ip }} {{ item.name }}"
-        state: present
-      loop: "{{ etc_hosts }}"
-      become: yes
-
-    ##################################################################
-    - name: Create Netplan configuration for enp3s0 interface with DHCP
-      copy:
-        dest: "/etc/netplan/00-3ia3-config.yaml"
-        content: |
-          network:
-            version: 2
-            renderer: networkd
-            ethernets:
-              enp3s0:
-                dhcp4: false
-                addresses:
-                  - "{{ remote_ip }}"
-        owner: root
-        group: root
-        mode: '0600'
-
-    - name: Apply Netplan configuration
-      command: netplan apply
-      become: true
     ##################################################################
     #SSH gakoak sortu eta elkarbanatzea faltako litzateke. Isardeko makinetan eginda dago
     ##################################################################
-    - name: Install JRE after apt update
-      become: yes
-      apt:
-        name: 
-          - default-jre
-        state: present
-        update_cache: yes
-    - name: Install ACL (Required to download as hadoop user)
-      become: yes
-      apt:
-        name: 
-          - acl
-        state: present
-        update_cache: yes
+
     - name:  Beharrezko direktorioa sortu
       become: yes
       file:
@@ -77,9 +22,86 @@
       become: yes
       become_user: hadoop
       unarchive:
-        src: https://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-3.4.1/hadoop-3.4.1.tar.gz
+        src: https://dlcdn.apache.org/hadoop/common/hadoop-3.4.1/hadoop-3.4.1.tar.gz
         dest: "{{installation_dir}}"
         mode: 0755
         remote_src: yes
 
+    - name: Move all the files to parent Directory
+      become: yes
+      become_user: hadoop
+      shell: |
+        mv {{installation_dir}}/hadoop-*/* {{installation_dir}}/.
+        rm -r {{installation_dir}}/hadoop-*
 
+    - name: profile fitxategia Hadoopen iturburuarekin eguneratu
+      ansible.builtin.lineinfile:
+        path: /home/hadoop/.profile
+        regexp: '^PATH='
+        line: 'PATH=/opt/hadoop/bin:/opt/hadoop/sbin:$PATH'
+        owner: hadoop
+        group: hadoop
+
+    - name: bashrc fitxategian PATH egokitu
+      ansible.builtin.lineinfile:
+        path: /home/hadoop/.bashrc
+        regexp: '^export HADOOP_HOME='
+        line: 'export HADOOP_HOME=/opt/hadoop'
+        owner: hadoop
+        group: hadoop        
+
+    - name: bashrc fitxategian PATH egokitu
+      ansible.builtin.lineinfile:
+        path: /home/hadoop/.bashrc
+        regexp: '^export PATH='
+        line: 'export PATH=${PATH}:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin'
+        owner: hadoop
+        group: hadoop
+
+    - name: "Fetch JAVA_HOME"
+      shell: dirname $(dirname $(readlink -f $(which javac)))
+      register: java_home
+
+    - name: JAVA_HOME eguneratu hadoop instalazioan
+      ansible.builtin.lineinfile:
+        path: /opt/hadoop/etc/hadoop/hadoop-env.sh        
+        regexp: '^export JAVA_HOME='
+        line: 'export JAVA_HOME={{ java_home.stdout }}'
+        owner: hadoop
+        group: hadoop
+
+    - name: core-site.xml fitxategia kopiatu 
+      ansible.builtin.template:
+        src: template/core-site.xml.j2
+        dest: /opt/hadoop/etc/hadoop/core-site.xml
+        owner: hadoop
+        group: hadoop
+        mode: '0644'
+    - name: hdfs-site.xml fitxategia kopiatu 
+      ansible.builtin.template:
+        src: template/hdfs-site.xml.j2
+        dest: /opt/hadoop/etc/hadoop/hdfs-site.xml
+        owner: hadoop
+        group: hadoop
+        mode: '0644'
+    - name: mapred-site.xml fitxategia kopiatu 
+      ansible.builtin.template:
+        src: template/mapred-site.xml.j2
+        dest: /opt/hadoop/etc/hadoop/mapred-site.xml
+        owner: hadoop
+        group: hadoop
+        mode: '0644'                
+    - name: yarn-site.xml fitxategia kopiatu 
+      ansible.builtin.template:
+        src: template/yarn-site.xml.j2
+        dest: /opt/hadoop/etc/hadoop/yarn-site.xml
+        owner: hadoop
+        group: hadoop
+        mode: '0644'
+    - name: worker fitxategia datanodeekin
+      ansible.builtin.template:
+        src: template/workers.j2
+        dest: /opt/hadoop/etc/hadoop/workers
+        owner: hadoop
+        group: hadoop
+        mode: '0744'                        

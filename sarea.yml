@@ -1,0 +1,51 @@
+- hosts: all
+  become: True
+  become_user: root
+  vars:
+    etc_hosts:
+      - ip: "192.168.85.2"
+        name: "namenode"
+      - ip: "192.168.85.3"
+        name: "datanode1"
+      - ip: "192.168.85.4"
+        name: "datanode2"
+
+  tasks:
+    - name: Set hostname
+      hostname:
+        name: "{{ remote_hostname }}"
+    - name: Add extra hosts entries to /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        create: yes
+        line: "{{ item.ip }} {{ item.name }}"
+        state: present
+      loop: "{{ etc_hosts }}"
+      become: yes
+
+    - name: Create Netplan configuration for enp3s0 interface with DHCP
+      copy:
+        dest: "/etc/netplan/00-3ia3-config.yaml"
+        content: |
+          network:
+            version: 2
+            renderer: networkd
+            ethernets:
+              enp3s0:
+                dhcp4: false
+                addresses:
+                  - "{{ remote_ip }}"
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Apply Netplan configuration
+      command: netplan apply
+      become: true
+    - name: ssh konfigurazio fitxategia
+      ansible.builtin.template:
+        src: template/ssh_config.j2
+        dest: /home/hadoop/.ssh/config
+        owner: hadoop
+        group: hadoop
+        mode: '0600'                

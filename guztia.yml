@@ -1,0 +1,7 @@
+---
+
+- import_playbook: oinarri_sistema.yml
+- import_playbook: sarea.yml  
+- import_playbook: hdfs.yml
+
+

@@ -1,0 +1,30 @@
+- hosts: all
+  become: True
+  become_user: root
+
+  tasks:
+    - name: Sistema eguneratu
+      ansible.builtin.apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day
+    - name: Eguneratu APT package manager repositories cache
+      become: true
+      apt:
+        update_cache: yes
+    - name: Istal Java using Ansible
+      become: yes
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+           - openjdk-11-jdk
+           - unzip
+    - name: ACL instalatu (hadoop erabiltzaile bezala fitxategiak jaisteko beharrezkoa)
+      become: yes
+      apt:
+        name: 
+          - acl
+        state: present
+        update_cache: yes        
