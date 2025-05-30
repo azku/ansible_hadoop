@@ -62,6 +62,14 @@
       shell: dirname $(dirname $(readlink -f $(which javac)))
       register: java_home
 
+    - name: JAVA_HOME bashrc fitxategian
+      ansible.builtin.lineinfile:
+        path: /home/hadoop/.bashrc
+        regexp: '^export JAVA_HOME='
+        line: 'export JAVA_HOME={{ java_home.stdout }}'
+        owner: hadoop
+        group: hadoop
+        
     - name: JAVA_HOME eguneratu hadoop instalazioan
       ansible.builtin.lineinfile:
         path: /opt/hadoop/etc/hadoop/hadoop-env.sh        
@@ -104,4 +112,11 @@
         dest: /opt/hadoop/etc/hadoop/workers
         owner: hadoop
         group: hadoop
-        mode: '0744'                        
+        mode: '0744'
+    - name: masters fitxategia datanodeekin
+      ansible.builtin.template:
+        src: template/masters.j2
+        dest: /opt/hadoop/etc/hadoop/masters
+        owner: hadoop
+        group: hadoop
+        mode: '0744'                                

@@ -7,7 +7,7 @@
       ansible.builtin.apt:
         upgrade: yes
         update_cache: yes
-        cache_valid_time: 86400 #One day
+        
     - name: Eguneratu APT package manager repositories cache
       become: true
       apt:
@@ -27,4 +27,22 @@
         name: 
           - acl
         state: present
-        update_cache: yes        
+        update_cache: yes
+
+    - name: Hadoop erabiltzailea sortu
+      ansible.builtin.user:
+        name: hadoop
+        create_home: yes
+
+    - name: Creates directory
+      ansible.builtin.file:
+        path: /home/hadoop/.ssh
+        state: directory
+      become: yes
+      become_user: hadoop
+
+    - name: Copy a "sudoers" file on the remote machine for editing
+      ansible.builtin.copy:
+        src: /home/ir_inf/.ssh/hadoop_key
+        dest: /home/hadoop/.ssh/hadoop_key
+        remote_src: yes
