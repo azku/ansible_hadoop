@@ -19,7 +19,8 @@
         state: present
       vars:
         packages:
-           - openjdk-11-jdk
+           - default-jre
+           - default-jdk
            - unzip
     - name: ACL instalatu (hadoop erabiltzaile bezala fitxategiak jaisteko beharrezkoa)
       become: yes
@@ -32,17 +33,30 @@
     - name: Hadoop erabiltzailea sortu
       ansible.builtin.user:
         name: hadoop
+        shell: /bin/bash
         create_home: yes
 
-    - name: Creates directory
+    - name: Sortu .ssh direktorioa hadoop erabiltzailean
       ansible.builtin.file:
         path: /home/hadoop/.ssh
         state: directory
       become: yes
       become_user: hadoop
 
-    - name: Copy a "sudoers" file on the remote machine for editing
+      # Haul aldatzea komeniko litzateke. Momentuan gakoak sortu eta hedatu
+    - name: kopiatu ir_inf erabiltzaileko hadoop_key hadoop erabiltzailera (remote-remote)
       ansible.builtin.copy:
         src: /home/ir_inf/.ssh/hadoop_key
         dest: /home/hadoop/.ssh/hadoop_key
         remote_src: yes
+        owner: hadoop
+        group: hadoop
+        mode: '0600'
+    - name: kopiatu ir_inf erabiltzaileko gako publikoa
+      ansible.builtin.copy:
+        src: /home/ir_inf/.ssh/authorized_keys
+        dest: /home/hadoop/.ssh/authorized_keys
+        remote_src: yes
+        owner: hadoop
+        group: hadoop
+        mode: '0600'

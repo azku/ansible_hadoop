@@ -77,6 +77,15 @@
         line: 'export JAVA_HOME={{ java_home.stdout }}'
         owner: hadoop
         group: hadoop
+    - name: JAVA_HOME eguneratu hadoop instalazioan
+      ansible.builtin.lineinfile:
+        path: /opt/hadoop/etc/hadoop/hadoop-env.sh        
+        regexp: '^export HADOOP_CLASSPATH+='
+        line: 'export HADOOP_CLASSPATH+=" $HADOOP_HOME/lib/*.jar"'
+        owner: hadoop
+        group: hadoop
+
+        
 
     - name: core-site.xml fitxategia kopiatu 
       ansible.builtin.template:
