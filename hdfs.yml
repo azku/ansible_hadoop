@@ -48,8 +48,32 @@
         regexp: '^export HADOOP_HOME='
         line: 'export HADOOP_HOME=/opt/hadoop'
         owner: hadoop
-        group: hadoop        
+        group: hadoop
 
+    - name: bashrc fitxategian YARN_HOME egokitu
+      ansible.builtin.lineinfile:
+        path: /home/hadoop/.bashrc
+        regexp: '^export YARN_HOME='
+        line: 'export YARN_HOME=$HADOOP_HOME'
+        owner: hadoop
+        group: hadoop
+
+    - name: bashrc fitxategian HADOOP COMMON LIB egokitu
+      ansible.builtin.lineinfile:
+        path: /home/hadoop/.bashrc
+        regexp: '^export HADOOP_COMMON_LIB_NATIVE_DIR='
+        line: 'export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native'
+        owner: hadoop
+        group: hadoop            
+
+    - name: bashrc fitxategian HADOOP_OPTS LIB egokitu
+      ansible.builtin.lineinfile:
+        path: /home/hadoop/.bashrc
+        regexp: '^export HADOOP_OPTS='
+        line: 'export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"'
+        owner: hadoop
+        group: hadoop            
+        
     - name: bashrc fitxategian PATH egokitu
       ansible.builtin.lineinfile:
         path: /home/hadoop/.bashrc
@@ -86,6 +110,14 @@
         group: hadoop
 
         
+
+    - name: JAVA_HOME eguneratu hadoop instalazioan
+      ansible.builtin.lineinfile:
+        path: /opt/hadoop/etc/hadoop/hadoop-env.sh        
+        regexp: '^export HADOOP_CLASSPATH+='
+        line: 'export HADOOP_CLASSPATH+=" $HADOOP_HOME/lib/*.jar"'
+        owner: hadoop
+        group: hadoop
 
     - name: core-site.xml fitxategia kopiatu 
       ansible.builtin.template:

@@ -12,15 +12,14 @@
       become: true
       apt:
         update_cache: yes
-    - name: Istal Java using Ansible
+    - name: Instal Java using Ansible
       become: yes
       apt:
         name: "{{ packages }}"
         state: present
       vars:
         packages:
-           - default-jre
-           - default-jdk
+           - openjdk-17-jdk
            - unzip
     - name: ACL instalatu (hadoop erabiltzaile bezala fitxategiak jaisteko beharrezkoa)
       become: yes
@@ -42,21 +41,10 @@
         state: directory
       become: yes
       become_user: hadoop
+      
+    # - name: Copy a "sudoers" file on the remote machine for editing
+    #   ansible.builtin.copy:
+    #     src: /home/ir_inf/.ssh/hadoop_key
+    #     dest: /home/hadoop/.ssh/hadoop_key
+    #     remote_src: yes
 
-      # Haul aldatzea komeniko litzateke. Momentuan gakoak sortu eta hedatu
-    - name: kopiatu ir_inf erabiltzaileko hadoop_key hadoop erabiltzailera (remote-remote)
-      ansible.builtin.copy:
-        src: /home/ir_inf/.ssh/hadoop_key
-        dest: /home/hadoop/.ssh/hadoop_key
-        remote_src: yes
-        owner: hadoop
-        group: hadoop
-        mode: '0600'
-    - name: kopiatu ir_inf erabiltzaileko gako publikoa
-      ansible.builtin.copy:
-        src: /home/ir_inf/.ssh/authorized_keys
-        dest: /home/hadoop/.ssh/authorized_keys
-        remote_src: yes
-        owner: hadoop
-        group: hadoop
-        mode: '0600'

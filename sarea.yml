@@ -42,10 +42,4 @@
     - name: Apply Netplan configuration
       command: netplan apply
       become: true
-    - name: ssh konfigurazio fitxategia
-      ansible.builtin.template:
-        src: template/ssh_config.j2
-        dest: /home/hadoop/.ssh/config
-        owner: hadoop
-        group: hadoop
-        mode: '0600'                
+        
