@@ -1,0 +1,23 @@
+- hosts: all
+  become: True
+  become_user: root
+  vars:
+    users:
+      - { name: 'user2', password: '{{ "password1" | password_hash("sha512") }}', groups: 'supergroup' }
+  tasks:
+    - name: Ensure group "supergroup" exists
+      ansible.builtin.group:
+        name: supergroup
+        state: present
+
+    - name: Add users
+      user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        groups: "{{ item.groups }}"
+        append: yes
+        create_home: yes
+        shell: "/bin/bash"
+      loop: "{{ users }}"
+
+
