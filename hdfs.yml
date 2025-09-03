@@ -22,7 +22,8 @@
       become: yes
       become_user: hadoop
       unarchive:
-        src: https://dlcdn.apache.org/hadoop/common/hadoop-3.4.1/hadoop-3.4.1.tar.gz
+#        src: https://dlcdn.apache.org/hadoop/common/hadoop-3.4.1/hadoop-3.4.1.tar.gz
+        src: https://dlcdn.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
         dest: "{{installation_dir}}"
         mode: 0755
         remote_src: yes
