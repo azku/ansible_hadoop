@@ -109,8 +109,14 @@
         line: 'export HADOOP_CLASSPATH+=" $HADOOP_HOME/lib/*.jar"'
         owner: hadoop
         group: hadoop
+    - name: hadoop-env HADOOP_OPTS
+      ansible.builtin.lineinfile:
+        path: /opt/hadoop/etc/hadoop/hadoop-env.sh        
+        regexp: '^export HADOOP_OPTS='
+        line: 'export HADOOP_OPTS="$HADOOP_OPTS --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED"'
+        owner: hadoop
+        group: hadoop
 
-        
 
     - name: JAVA_HOME eguneratu hadoop instalazioan
       ansible.builtin.lineinfile:
