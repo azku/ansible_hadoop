@@ -4,12 +4,21 @@
   vars:
     users:
       - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
-      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
-      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
-      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
-      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
-      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
-      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'i.bautista', password: '{{ "i.bautista" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'i.cabellomora', password: '{{ "i.cabellomora" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'ja.erazojimenez', password: '{{ "ja.erazojimenez" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'g.flecha', password: '{{ "g.flecha" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'andoni.garciatorres', password: '{{ "andoni.garciatorres" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'p.hernando', password: '{{ "p.hernando" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'julen.hidalgo', password: '{{ "julen.hidalgo" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'i.lopezcorreas', password: '{{ "i.lopezcorreas" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'j.martinvaldivielso', password: '{{ "j.martinvaldivielso" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'o.molinaramon', password: '{{ "o.molinaramon" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'd.nardiz', password: '{{ "d.nardiz" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'sm.sorhouet', password: '{{ "sm.sorhouet" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'a.tapiafernandez', password: '{{ "a.tapiafernandez" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'i.zaballarokeni', password: '{{ "i.zaballarokeni" | password_hash("sha512") }}', groups: 'supergroup' }
+
   tasks:
     - name: Ensure group "supergroup" exists
       ansible.builtin.group:
