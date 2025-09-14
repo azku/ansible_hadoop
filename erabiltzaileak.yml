@@ -3,7 +3,13 @@
   become_user: root
   vars:
     users:
-      - { name: 'user2', password: '{{ "password1" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
   tasks:
     - name: Ensure group "supergroup" exists
       ansible.builtin.group:

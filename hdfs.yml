@@ -17,6 +17,13 @@
         mode: 0755
         owner: hadoop
         group: hadoop
+
+    - name: Log direktorioa sortu
+      become: yes
+      file:
+        path: /tmp/logs
+        state: directory
+        mode: 1777
         
     - name: Hadoop lortu
       become: yes
