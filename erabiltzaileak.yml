@@ -18,6 +18,7 @@
       - { name: 'sm.sorhouet', password: '{{ "sm.sorhouet" | password_hash("sha512") }}', groups: 'supergroup' }
       - { name: 'a.tapiafernandez', password: '{{ "a.tapiafernandez" | password_hash("sha512") }}', groups: 'supergroup' }
       - { name: 'i.zaballarokeni', password: '{{ "i.zaballarokeni" | password_hash("sha512") }}', groups: 'supergroup' }
+      - { name: 'e.azpirilopez', password: '{{ "e.azpirilopez" | password_hash("sha512") }}', groups: 'supergroup' }      
 
   tasks:
     - name: Ensure group "supergroup" exists
