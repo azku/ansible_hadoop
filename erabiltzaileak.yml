@@ -2,7 +2,8 @@
   become: True
   become_user: root
   vars:
-    users:
+    users: #Haoop erabiltzailea ez aldatu
+      - { name: 'hadoop', password: '{{ "JKHeuhajfgjgeuek" | password_hash("sha512") }}', groups: 'supergroup' }
       - { name: 'h.axpegarcia', password: '{{ "h.axpegarcia" | password_hash("sha512") }}', groups: 'supergroup' }
       - { name: 'i.bautista', password: '{{ "i.bautista" | password_hash("sha512") }}', groups: 'supergroup' }
       - { name: 'i.cabellomora', password: '{{ "i.cabellomora" | password_hash("sha512") }}', groups: 'supergroup' }
@@ -37,3 +38,58 @@
       loop: "{{ users }}"
 
 
+    - name: profile fitxategia Hadoopen iturburuarekin eguneratu
+      ansible.builtin.lineinfile:
+        path: /home/{{ item.name }}/.profile
+        regexp: '^PATH='
+        line: 'PATH=/opt/hadoop/bin:/opt/hadoop/sbin:$PATH'
+      loop: "{{ users }}"        
+
+    - name: bashrc fitxategian HAOOP_HOME egokitu
+      ansible.builtin.lineinfile:
+        path: /home/{{ item.name }}/.bashrc
+        regexp: '^export HADOOP_HOME='
+        line: 'export HADOOP_HOME=/opt/hadoop'
+      loop: "{{ users }}"
+
+    - name: bashrc fitxategian PATH egokitu
+      ansible.builtin.lineinfile:
+        path: /home/{{ item.name }}/.bashrc
+        regexp: '^export PATH='
+        line: 'export PATH=${PATH}:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin'
+      loop: "{{ users }}"
+
+    - name: bashrc fitxategian YARN_HOME egokitu
+      ansible.builtin.lineinfile:
+        path: /home/{{ item.name }}/.bashrc
+        regexp: '^export YARN_HOME='
+        line: 'export YARN_HOME=$HADOOP_HOME'
+      loop: "{{ users }}"
+
+    - name: bashrc fitxategian HADOOP COMMON LIB egokitu
+      ansible.builtin.lineinfile:
+        path: /home/{{ item.name }}/.bashrc
+        regexp: '^export HADOOP_COMMON_LIB_NATIVE_DIR='
+        line: 'export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native'
+      loop: "{{ users }}"
+
+    - name: bashrc fitxategian HADOOP_OPTS LIB egokitu
+      ansible.builtin.lineinfile:
+        path: /home/{{ item.name }}/.bashrc
+        regexp: '^export HADOOP_OPTS='
+        line: 'export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"'
+      loop: "{{ users }}"
+
+
+    - name: "Fetch JAVA_HOME"
+      shell: dirname $(dirname $(readlink -f $(which javac)))
+      register: java_home
+
+    - name: JAVA_HOME bashrc fitxategian
+      ansible.builtin.lineinfile:
+        path: /home/{{ item.name }}/.bashrc
+        regexp: '^export JAVA_HOME='
+        line: 'export JAVA_HOME={{ java_home.stdout }}'
+      loop: "{{ users }}"        
+
+      
